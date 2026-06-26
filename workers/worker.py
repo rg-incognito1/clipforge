@@ -18,13 +18,13 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-BACKEND_URL  = os.getenv("BACKEND_URL", "http://localhost:8080")
-REDIS_URL    = os.getenv("REDIS_URL",   "redis://localhost:6379")
-STORAGE_PATH = os.getenv("STORAGE_PATH", "/storage")
-ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-HF_TOKEN     = os.getenv("HF_TOKEN", "")
+BACKEND_URL   = os.getenv("BACKEND_URL",   "http://localhost:8080")
+REDIS_URL     = os.getenv("REDIS_URL",     "redis://localhost:6379")
+STORAGE_PATH  = os.getenv("STORAGE_PATH",  "/storage")
+GEMINI_KEY    = os.getenv("GEMINI_API_KEY", "")
+HF_TOKEN      = os.getenv("HF_TOKEN",      "")
 WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
-QUEUE_KEY    = "clipforge:job_queue"
+QUEUE_KEY     = "clipforge:job_queue"
 
 
 def _update_status(job_id, status, error=None):
@@ -90,8 +90,8 @@ def process_job(job_id):
 
     # ── Step 2: Analyze ──────────────────────────────────────────────────────
     _update_status(job_id, "ANALYZING")
-    log.info(f"[{job_id[:8]}] Analyzing with Claude...")
-    analysis = analyze_transcript(segments, ANTHROPIC_KEY)
+    log.info(f"[{job_id[:8]}] Analyzing with Gemini...")
+    analysis = analyze_transcript(segments, GEMINI_KEY)
     clips_found = analysis.get("clips", [])
     log.info(f"[{job_id[:8]}] Found {len(clips_found)} candidate clips")
 
@@ -138,20 +138,19 @@ def process_job(job_id):
 
             if out_path and os.path.exists(out_path):
                 _report_clip(job_id, {
-                    "startSeconds":    clip_info["start_seconds"],
-                    "endSeconds":      clip_info["end_seconds"],
-                    "duration":        clip_info["end_seconds"] - clip_info["start_seconds"],
-                    "momentType":      clip_info.get("moment_type", "viral"),
-                    "viralScore":      clip_info.get("viral_score", 7) * 10,
-                    "outputPath":      out_path,
-                    "storylineTitle":  clip_info.get("storyline_title", ""),
+                    "startSeconds":     clip_info["start_seconds"],
+                    "endSeconds":       clip_info["end_seconds"],
+                    "duration":         clip_info["end_seconds"] - clip_info["start_seconds"],
+                    "momentType":       clip_info.get("moment_type", "viral"),
+                    "viralScore":       clip_info.get("viral_score", 7) * 10,
+                    "outputPath":       out_path,
+                    "storylineTitle":   clip_info.get("storyline_title", ""),
                     "storylineSummary": clip_info.get("storyline_summary", ""),
                 })
                 processed += 1
 
         except Exception as e:
             log.error(f"[{job_id[:8]}] Clip {i+1} failed: {e}")
-            # Continue processing remaining clips
 
     if processed == 0:
         raise RuntimeError("All clip renders failed")

@@ -7,7 +7,7 @@ AI-powered video editor SDK + SaaS. Upload any long-form video → AI finds vira
 | Layer | Tech |
 |---|---|
 | Backend API | Spring Boot 3.3 + PostgreSQL + Redis |
-| AI Workers | Python 3.11 · Whisper · Claude · MediaPipe · FFmpeg |
+| AI Workers | Python 3.11 · Whisper · Gemini 2.5 Flash · MediaPipe · FFmpeg |
 | Frontend | Next.js 15 · TypeScript · Tailwind |
 | Infrastructure | Docker Compose |
 
@@ -16,7 +16,7 @@ AI-powered video editor SDK + SaaS. Upload any long-form video → AI finds vira
 ### 1. Copy env file
 ```bash
 cp .env.example .env
-# Fill in ANTHROPIC_API_KEY (required)
+# Fill in GEMINI_API_KEY (required) — free at https://aistudio.google.com/app/apikey
 # HF_TOKEN is optional — enables speaker diarization (better multi-speaker crop)
 ```
 
