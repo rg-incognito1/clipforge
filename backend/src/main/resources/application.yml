@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: clipforge-backend
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/clipforge}
+    username: ${SPRING_DATASOURCE_USERNAME:clipforge}
+    password: ${SPRING_DATASOURCE_PASSWORD:clipforge}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: 6379
+
+  servlet:
+    multipart:
+      max-file-size: 4GB
+      max-request-size: 4GB
+      enabled: true
+
+server:
+  port: 8080
+  tomcat:
+    connection-timeout: 600s
+
+storage:
+  path: ${STORAGE_PATH:/storage}
+
+logging:
+  level:
+    io.clipforge: INFO
+    org.hibernate.SQL: WARN
